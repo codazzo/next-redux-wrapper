@@ -4,7 +4,6 @@ var ReactRedux = require('react-redux');
 var connect = ReactRedux.connect;
 var Provider = ReactRedux.Provider;
 
-var memoizedStore;
 var _Promise;
 var _debug = false;
 var skipMerge = ['initialState', 'initialProps', 'isServer', 'store'];
@@ -20,11 +19,12 @@ function initStore(makeStore, req, initialState) {
     }
 
     // Memoize store if client
-    if (!memoizedStore) {
-        memoizedStore = makeStore(initialState);
+    // Cannot use the module scope since it won't work with webpack's HMR, which is enabled by default in Next projects
+    if (!window.MEMOIZED_REDUX_STORE) {
+        window.MEMOIZED_REDUX_STORE = makeStore(initialState);
     }
 
-    return memoizedStore;
+    return window.MEMOIZED_REDUX_STORE;
 
 }
 
